@@ -1,12 +1,12 @@
-#Smart Restaurant Queue Management System
+Smart Restaurant Queue Management System
 
-Overview
+Overview:
 
 The Smart Restaurant Queue Management System (SRQMS) is a digital solution designed to manage restaurant waiting lines efficiently. The system replaces traditional manual queues with a token-based digital queue system, allowing customers to register in the queue, track their position, and receive notifications when their table is ready.
 
 The system helps restaurants reduce waiting confusion, improve table utilization, and enhance overall customer experience.
 
-Problem Statement
+Problem Statement:
 
 In many restaurants, managing waiting customers manually leads to:
 
@@ -20,7 +20,7 @@ Poor customer experience
 
 This system addresses these issues by digitizing the queue management process.
 
-Objectives
+Objectives:
 
 Digitize restaurant waiting queues
 
@@ -34,7 +34,7 @@ Notify customers when their turn arrives
 
 Provide reports and analytics for management
 
-Key Features
+Key Features:
 
 Digital Queue Registration – Customers can join the queue using mobile or QR code.
 
@@ -52,7 +52,7 @@ Notification System – Alerts customers when their turn is near.
 
 Queue History & Reports – Stores data for analytics and performance monitoring.
 
-System Architecture
+System Architecture:
 
 The system follows a Three-Tier Architecture consisting of:
 
@@ -82,7 +82,7 @@ Data Layer (Database)
 
 Stores tokens, customers, queue status, tables, and reports. 
 
-UML summary
+UML summary:
 
 User Roles
 Customer
