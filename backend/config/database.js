@@ -1,6 +1,6 @@
 const { open } = require('sqlite');
 const Database = require('better-sqlite3');
-const db = new Database('/data/database.db');
+const db = new Database('../restaurant.db');
 const path = require('path');
 
 
