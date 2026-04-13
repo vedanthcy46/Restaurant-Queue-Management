@@ -3,7 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 const cors = require('cors');
-const { initializeDB } = require('./config/database');
+const db = require('./config/database'); // direct instance
 const authRoutes = require('./routes/authRoutes');
 const queueRoutes = require('./routes/queueRoutes');
 const staffRoutes = require('./routes/staffRoutes');
@@ -12,6 +12,7 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
     cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] }
 });
@@ -19,31 +20,34 @@ const io = new Server(server, {
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
-// Attach socket.io to every request so controllers can emit events
+// Attach socket.io to every request
 app.use((req, res, next) => {
     req.io = io;
     next();
 });
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/queue', queueRoutes);
 app.use('/api/staff', staffRoutes);
 app.use('/api/table', tableRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Socket connection
 io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
-    socket.on('disconnect', () => console.log('Client disconnected:', socket.id));
+    socket.on('disconnect', () =>
+        console.log('Client disconnected:', socket.id)
+    );
 });
 
 const PORT = 5000;
 
-const startServer = async () => {
+// 🚀 START SERVER (SYNC now)
+const startServer = () => {
     try {
-        const db = await initializeDB();
-
-        // Create tables if not exist
-        await db.exec(`
+        // Create tables
+        db.exec(`
             CREATE TABLE IF NOT EXISTS user (
                 user_id   INTEGER PRIMARY KEY AUTOINCREMENT,
                 name      TEXT NOT NULL,
@@ -80,25 +84,34 @@ const startServer = async () => {
             );
         `);
 
-        // Seed default settings if empty
-        const settingsCount = await db.get(`SELECT COUNT(*) as count FROM settings`);
+        // Seed settings
+        const settingsCount = db.prepare(
+            `SELECT COUNT(*) as count FROM settings`
+        ).get();
+
         if (settingsCount.count === 0) {
-            await db.run(`INSERT INTO settings (key, value) VALUES ('avg_wait_time', '10')`);
-            await db.run(`INSERT INTO settings (key, value) VALUES ('priority_queue', 'false')`);
+            db.prepare(`INSERT INTO settings (key, value) VALUES (?, ?)`)
+              .run('avg_wait_time', '10');
+
+            db.prepare(`INSERT INTO settings (key, value) VALUES (?, ?)`)
+              .run('priority_queue', 'false');
+
             console.log('Default settings seeded');
         }
 
-        // Migration: add role column if it doesn't exist
-        const columns = await db.all(`PRAGMA table_info(user)`);
+        // Migration check
+        const columns = db.prepare(`PRAGMA table_info(user)`).all();
         const hasRole = columns.some(c => c.name === 'role');
+
         if (!hasRole) {
-            await db.exec(`ALTER TABLE user ADD COLUMN role TEXT NOT NULL DEFAULT 'staff'`);
-            console.log('Migration: added role column to user table');
+            db.exec(`ALTER TABLE user ADD COLUMN role TEXT NOT NULL DEFAULT 'staff'`);
+            console.log('Migration: added role column');
         }
 
         server.listen(PORT, () => {
             console.log(`Server running at http://localhost:${PORT}`);
         });
+
     } catch (err) {
         console.log('Startup Error:', err);
     }
