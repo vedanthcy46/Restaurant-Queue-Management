@@ -1,9 +1,10 @@
-const Database = require('better-sqlite3');
-const path = require('path');
+const { Pool } = require('pg');
 
-// Create DB instance (sync)
-const db = new Database(path.join(__dirname, '../restaurant.db'));
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false // required for Render
+    }
+});
 
-console.log('Connected to SQLite (better-sqlite3)');
-
-module.exports = db;
+module.exports = pool;

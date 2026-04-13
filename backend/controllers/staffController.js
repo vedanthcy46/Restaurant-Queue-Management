@@ -1,47 +1,69 @@
-const db = require('../config/database'); // better-sqlite3 instance
+const db = require('../config/database'); // pg Pool
 
-const getFullQueue = (req, res) => {
+// GET FULL QUEUE
+const getFullQueue = async (req, res) => {
     try {
-        const queue = db.prepare(
-            `SELECT * FROM queue ORDER BY
-             CASE status WHEN 'called' THEN 0 WHEN 'waiting' THEN 1 ELSE 2 END,
+        const result = await db.query(
+            `SELECT * FROM queue 
+             ORDER BY 
+             CASE 
+                WHEN status = 'called' THEN 0 
+                WHEN status = 'waiting' THEN 1 
+                ELSE 2 
+             END,
              priority DESC, created_at ASC`
-        ).all();
+        );
 
-        res.json(queue);
+        res.json(result.rows);
+
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
 };
 
-const callNext = (req, res) => {
-    try {
-        // Check if already a called token
-        const alreadyCalled = db.prepare(
-            `SELECT * FROM queue WHERE status = 'called'`
-        ).get();
+// CALL NEXT (with transaction safety)
+const callNext = async (req, res) => {
+    const client = await db.connect();
 
-        if (alreadyCalled) {
+    try {
+        await client.query('BEGIN');
+
+        // Check if already called
+        const alreadyCalled = await client.query(
+            `SELECT * FROM queue WHERE status = 'called' LIMIT 1`
+        );
+
+        if (alreadyCalled.rows.length > 0) {
+            await client.query('ROLLBACK');
+            const token = alreadyCalled.rows[0];
+
             return res.status(400).json({
-                message: `Token #${alreadyCalled.token_number} is already called. Serve or skip it first.`
+                message: `Token #${token.token_number} is already called. Serve or skip it first.`
             });
         }
 
-        // Get next (priority first)
-        const next = db.prepare(
+        // Lock next row (prevents double calling)
+        const nextResult = await client.query(
             `SELECT * FROM queue 
-             WHERE status = 'waiting' 
-             ORDER BY priority DESC, created_at ASC 
-             LIMIT 1`
-        ).get();
+             WHERE status = 'waiting'
+             ORDER BY priority DESC, created_at ASC
+             LIMIT 1
+             FOR UPDATE SKIP LOCKED`
+        );
+
+        const next = nextResult.rows[0];
 
         if (!next) {
+            await client.query('ROLLBACK');
             return res.status(404).json({ message: 'No customers in queue' });
         }
 
-        db.prepare(
-            `UPDATE queue SET status = 'called' WHERE queue_id = ?`
-        ).run(next.queue_id);
+        await client.query(
+            `UPDATE queue SET status = 'called' WHERE queue_id = $1`,
+            [next.queue_id]
+        );
+
+        await client.query('COMMIT');
 
         req.io.emit('queue_updated');
         req.io.emit('token_called', {
@@ -56,17 +78,24 @@ const callNext = (req, res) => {
         });
 
     } catch (err) {
+        await client.query('ROLLBACK');
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };
 
-const skipToken = (req, res) => {
+// SKIP TOKEN
+const skipToken = async (req, res) => {
     try {
         const { queue_id } = req.params;
 
-        const entry = db.prepare(
-            `SELECT * FROM queue WHERE queue_id = ?`
-        ).get(queue_id);
+        const result = await db.query(
+            `SELECT * FROM queue WHERE queue_id = $1`,
+            [queue_id]
+        );
+
+        const entry = result.rows[0];
 
         if (!entry) {
             return res.status(404).json({ message: 'Token not found' });
@@ -80,9 +109,10 @@ const skipToken = (req, res) => {
             return res.status(400).json({ message: 'Token already skipped' });
         }
 
-        db.prepare(
-            `UPDATE queue SET status = 'skipped' WHERE queue_id = ?`
-        ).run(queue_id);
+        await db.query(
+            `UPDATE queue SET status = 'skipped' WHERE queue_id = $1`,
+            [queue_id]
+        );
 
         req.io.emit('queue_updated');
 
@@ -93,13 +123,17 @@ const skipToken = (req, res) => {
     }
 };
 
-const serveToken = (req, res) => {
+// SERVE TOKEN
+const serveToken = async (req, res) => {
     try {
         const { queue_id } = req.params;
 
-        const entry = db.prepare(
-            `SELECT * FROM queue WHERE queue_id = ?`
-        ).get(queue_id);
+        const result = await db.query(
+            `SELECT * FROM queue WHERE queue_id = $1`,
+            [queue_id]
+        );
+
+        const entry = result.rows[0];
 
         if (!entry) {
             return res.status(404).json({ message: 'Token not found' });
@@ -109,11 +143,12 @@ const serveToken = (req, res) => {
             return res.status(400).json({ message: 'Token already served' });
         }
 
-        db.prepare(
+        await db.query(
             `UPDATE queue 
              SET status = 'served', served_at = CURRENT_TIMESTAMP 
-             WHERE queue_id = ?`
-        ).run(queue_id);
+             WHERE queue_id = $1`,
+            [queue_id]
+        );
 
         req.io.emit('queue_updated');
 
