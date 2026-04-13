@@ -20,6 +20,19 @@
     text-align: center;
 }
 
+.back-link {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.back-link:hover { text-decoration: underline; }
+
 .form-group {
     margin-bottom: 1rem;
 }

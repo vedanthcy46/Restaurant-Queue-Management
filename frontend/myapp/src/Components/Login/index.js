@@ -3,7 +3,7 @@ import Input from '../Input';
 import Button from '../Button';
 import './index.css';
 
-const Login = ({ onSwitchToRegister }) => {
+const Login = ({ onLoginSuccess, onBack }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -25,18 +25,19 @@ const Login = ({ onSwitchToRegister }) => {
             const data = await response.json();
             if (response.ok) {
                 localStorage.setItem('token', data.token);
-                setMessage('Login Successful');
+                onLoginSuccess(data.user, data.token);
             } else {
                 setMessage(data.message);
             }
         } catch (err) {
-            setMessage('Login failed');
+            setMessage('Login failed. Is the server running?');
         }
     };
 
     return (
         <div className="auth-container">
             <div className="auth-card">
+                <button className="back-link" onClick={onBack}>← Back</button>
                 <h2>Login</h2>
                 <form onSubmit={handleSubmit}>
                     <Input label="Email" type="email" id="email" value={formData.email} onChange={handleChange} />
@@ -44,7 +45,6 @@ const Login = ({ onSwitchToRegister }) => {
                     <Button text="Login" type="submit" />
                 </form>
                 {message && <p className="message">{message}</p>}
-                <p onClick={onSwitchToRegister} className="switch-link">Don't have an account? Register</p>
             </div>
         </div>
     );

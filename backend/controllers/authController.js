@@ -31,22 +31,26 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     const { email, password } = req.body;
-    
+
+    // Check hardcoded admin first
+    if (email === 'admin@restaurant.com' && password === 'admin@123') {
+        const token = jwt.sign({ userId: 0, email, role: 'admin', name: 'Admin' }, 'secret_key', { expiresIn: '24h' });
+        return res.send({ message: 'Login Successful', token, user: { id: 0, name: 'Admin', email, role: 'admin' } });
+    }
+
     const user = await db().get('SELECT * FROM user WHERE email = ?', [email]);
-    
-    if (!user) {
-        return res.status(400).send({ message: "Invalid credentials" });
-    }
-    
+    if (!user) return res.status(400).send({ message: 'Invalid credentials' });
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
-    if (!isPasswordValid) {
-        return res.status(400).send({ message: "Invalid credentials" });
-    }
-    
-    const token = jwt.sign({ userId: user.user_id, email: user.email }, 'secret_key', { expiresIn: '24h' });
-    
-    res.send({ message: "Login Successful", token, user: { id: user.user_id, name: user.name, email: user.email } });
+    if (!isPasswordValid) return res.status(400).send({ message: 'Invalid credentials' });
+
+    const token = jwt.sign(
+        { userId: user.user_id, email: user.email, role: user.role, name: user.name },
+        'secret_key',
+        { expiresIn: '24h' }
+    );
+
+    res.send({ message: 'Login Successful', token, user: { id: user.user_id, name: user.name, email: user.email, role: user.role } });
 };
 
 module.exports = { register, login };

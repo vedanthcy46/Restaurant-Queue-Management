@@ -3,6 +3,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 20px;
     background: #f5f5f5;
 }
 
@@ -11,8 +12,7 @@
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 400px;
+    width: 50%;
 }
 
 .auth-card h2 {
@@ -32,7 +32,7 @@
 
 .form-group input {
     width: 100%;
-    padding: 0.75rem;
+    /* padding: 0.75rem; */
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
@@ -69,4 +69,10 @@
 
 .switch-link:hover {
     text-decoration: underline;
+}
+
+@media (max-width: 576px){
+    .auth-card{
+        width: 100%;
+    }
 }

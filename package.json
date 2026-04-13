@@ -1,0 +1,39 @@
+{
+  "name": "restaurant-queue-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon backend/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vedanthcy46/Restaurant-Queue-Management.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/vedanthcy46/Restaurant-Queue-Management/issues"
+  },
+  "homepage": "https://github.com/vedanthcy46/Restaurant-Queue-Management#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "create-react-app": "^5.1.0",
+    "date-fns": "^4.1.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.17.2",
+    "socket.io": "^4.8.3",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "tailwindcss": "^3.4.19"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

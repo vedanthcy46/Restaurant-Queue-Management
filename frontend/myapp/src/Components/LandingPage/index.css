@@ -1,0 +1,134 @@
+.landing-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.landing-content {
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+    color: white;
+}
+
+.logo {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.hero-section h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.tagline {
+    font-size: 1.2rem;
+    opacity: 0.75;
+    margin-bottom: 3rem;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.feature-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.feature-card span { font-size: 2rem; }
+.feature-card h3 { margin: 0.5rem 0 0.25rem; font-size: 1.1rem; }
+.feature-card p { opacity: 0.7; font-size: 0.9rem; }
+
+.cta-section {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-join {
+    padding: 1rem 3rem;
+    background: #e94560;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-join:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(233,69,96,0.4);
+}
+
+.btn-display {
+    padding: 1rem 2rem;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-display:hover { background: rgba(255,255,255,0.2); }
+
+.qr-section {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.qr-label {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    margin-bottom: 0.75rem;
+}
+
+.qr-box {
+    display: inline-block;
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    opacity: 0.5;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.staff-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-outline {
+    padding: 0.6rem 2rem;
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+}
+
+.btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+@media (max-width: 600px) {
+    .hero-section h1 { font-size: 2rem; }
+    .features { grid-template-columns: 1fr; }
+}

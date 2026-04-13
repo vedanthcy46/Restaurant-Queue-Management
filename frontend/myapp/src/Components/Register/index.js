@@ -3,7 +3,7 @@ import Input from '../Input';
 import Button from '../Button';
 import './index.css';
 
-const Register = ({ onSwitchToLogin }) => {
+const Register = ({ onSwitchToLogin, onBack }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -34,6 +34,7 @@ const Register = ({ onSwitchToLogin }) => {
     return (
         <div className="auth-container">
             <div className="auth-card">
+                <button className="back-link" onClick={onBack}>← Back</button>
                 <h2>Register</h2>
                 <form onSubmit={handleSubmit}>
                     <Input label="Name" type="text" id="name" value={formData.name} onChange={handleChange} />
