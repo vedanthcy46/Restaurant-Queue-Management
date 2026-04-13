@@ -1,8 +1,8 @@
 const { open } = require('sqlite');
-const sqlite3 = require('sqlite3');
+const Database = require('better-sqlite3');
+const db = new Database('/data/database.db');
 const path = require('path');
 
-let db = null;
 
 const initializeDB = async () => {
     db = await open({
