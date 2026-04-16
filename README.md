@@ -1,136 +1,134 @@
-Smart Restaurant Queue Management System
+# Smart Restaurant Queue Management System
 
-Overview:
+A full-stack queue management platform for restaurants, built to replace manual waiting lists with a real-time digital workflow.
 
-The Smart Restaurant Queue Management System (SRQMS) is a digital solution designed to manage restaurant waiting lines efficiently. The system replaces traditional manual queues with a token-based digital queue system, allowing customers to register in the queue, track their position, and receive notifications when their table is ready.
+## What This Project Does
 
-The system helps restaurants reduce waiting confusion, improve table utilization, and enhance overall customer experience.
+The Smart Restaurant Queue Management System helps restaurants:
 
-Problem Statement:
+- Register walk-in customers into a live queue
+- Generate and track token numbers in real time
+- Let staff call, skip, and serve customers efficiently
+- Manage table availability
+- Give admins visibility into operations and settings
 
-In many restaurants, managing waiting customers manually leads to:
+## Core Features
 
-Long waiting times
+- Customer queue registration
+- Automatic token generation
+- Real-time queue updates via Socket.IO
+- Staff panel for queue handling
+- Admin panel for management controls
+- Table status management
+- Queue history and basic analytics support
 
-Confusion about queue order
+## Tech Stack
 
-Inefficient table allocation
+- Frontend: React (Create React App)
+- Backend: Node.js + Express
+- Real-time: Socket.IO
+- Database: PostgreSQL (`pg`)
 
-Poor customer experience
+## Project Structure
 
-This system addresses these issues by digitizing the queue management process.
+```text
+Restaurant-Queue-Management/
+	backend/                 # Express API + DB setup + sockets
+	frontend/
+		myapp/                 # React client app
+	package.json             # Root scripts (backend start)
+```
 
-Objectives:
+## Getting Started
 
-Digitize restaurant waiting queues
+### Prerequisites
 
-Automatically generate token numbers
+- Node.js (v18 or later recommended)
+- npm
+- PostgreSQL database
 
-Provide real-time queue status
+### 1. Clone and install dependencies
 
-Allow staff to manage table availability
+Install root/backend dependencies:
 
-Notify customers when their turn arrives
+```bash
+npm install
+```
 
-Provide reports and analytics for management
+Install frontend dependencies:
 
-Key Features:
+```bash
+cd frontend/myapp
+npm install
+cd ../..
+```
 
-Digital Queue Registration – Customers can join the queue using mobile or QR code.
+### 2. Configure environment variables
 
-Automatic Token Generation – Unique tokens are generated for each customer.
+Create a `.env` file in the project root (or set environment variables in your deployment platform):
 
-Real-time Queue Tracking – Customers can view their position and estimated waiting time.
+```env
+DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
+PORT=5000
+JWT_SECRET=your_jwt_secret_here
+```
 
-Staff Control Panel – Staff can call, skip, or serve tokens.
+Notes:
 
-Table Availability Management – Staff can update table status.
+- `DATABASE_URL` is required by `backend/config/database.js`.
+- `PORT` is optional (defaults to `5000`).
 
-Display Screen Integration – Shows current and upcoming tokens.
+### 3. Run the backend
 
-Notification System – Alerts customers when their turn is near.
+From the project root:
 
-Queue History & Reports – Stores data for analytics and performance monitoring.
+```bash
+npm start
+```
 
-System Architecture:
+The API will run on `http://localhost:5000` by default.
 
-The system follows a Three-Tier Architecture consisting of:
+### 4. Run the frontend
 
-Presentation Layer (UI)
+Open another terminal:
 
-Customer Mobile Interface
+```bash
+cd frontend/myapp
+npm start
+```
 
-Staff Dashboard
+The React app will run on `http://localhost:3000` by default.
 
-Admin Panel
+## API Modules
 
-Display Screen Interface
+Backend routes are organized by module:
 
-Application Layer (Business Logic)
+- `/api/auth`
+- `/api/queue`
+- `/api/staff`
+- `/api/table`
+- `/api/admin`
 
-Queue Manager
+## User Roles
 
-Token Generator
+- Customer: Join queue, view token, track progress
+- Staff: Call next customer, skip/serve tokens, update tables
+- Admin: Manage settings, monitor queue operations
 
-Notification Service
+## Current Behavior on Startup
 
-Table Manager
+When the backend starts, it automatically:
 
-Authentication Service
+- Creates required database tables if they do not exist
+- Seeds default values in `settings` (for example `avg_wait_time`)
 
-Data Layer (Database)
+## Future Improvements
 
-Stores tokens, customers, queue status, tables, and reports. 
+- Better analytics dashboards and reporting
+- SMS/WhatsApp notification integrations
+- Reservation + waitlist hybrid workflow
+- Role-based access hardening and audit logs
 
-UML summary:
+## License
 
-User Roles
-Customer
-
-Register in queue
-
-View token number
-
-Track queue status
-
-Receive notifications
-
-Staff
-
-Call next token
-
-Skip or serve tokens
-
-Update table availability
-
-Admin
-
-Manage system settings
-
-View reports and analytics
-
-Reset queue
-
-Technology Stack (Proposed)
-
-Frontend: HTML, CSS, JavaScript / React
-
-Backend: Node.js / Java / Python
-
-Database: MySQL or PostgreSQL
-
-Hosting: Cloud-based server
-
-Communication: REST APIs, HTTPS
-
-Benefits
-
-Reduces waiting confusion
-
-Improves customer satisfaction
-
-Optimizes table utilization
-
-Automates queue handling
-
-Provides useful operational analytics
+This project is currently marked as `ISC` in `package.json`.
